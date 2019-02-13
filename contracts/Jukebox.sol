@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-contract Adoption {
+contract Jukebox {
   // --- Contract properties ------------------------------------------------ //
 
   // --- Data structures --- //
@@ -20,23 +20,25 @@ contract Adoption {
   // --- State --- //
 
   // Song state
-  Song[3] public songsAvailable = [
-    Song(0, 120),
-    Song(1, 120),
-    Song(2, 120)
-  ];
+  Song[3] songsAvailable;
 
   // Songs currently queued
-  QueuedSong[5] public queue;
+  QueuedSong[5] queue;
   uint queueSize = 0;
-  uint[] public playHistoryIds;
-  uint playHistorySize = 0;
 
   // --- Events --- //
 
   event SongSkip(uint skippedSongId);
   event SongPrepend(uint songId);
   event SongAppend(uint songId);
+
+  // --- Constructor -------------------------------------------------------- //
+
+  constructor() public {
+    songsAvailable[0] = Song(0, 120);
+    songsAvailable[1] = Song(1, 120);
+    songsAvailable[2] = Song(2, 120);
+  }
 
   // --- Business logic ----------------------------------------------------- //
 
@@ -47,11 +49,6 @@ contract Adoption {
     return queueSize;
   }
 
-  /** Get the current size of playHistory. */
-  function getPlayHistorySize() public view returns (uint) {
-    return playHistorySize;
-  }
-
   /** Return data about a song currently in the queue. */
   function getSongDataByQueueIndex(uint queueIndex)
     public
@@ -59,7 +56,7 @@ contract Adoption {
     returns
   (uint songId, uint durationSecs, uint timestampSecs, bool isSongCompleted) {
     require(queueIndex < queueSize - 1, "Song queue is smaller than the provided index.");
-    QueuedSong storage qsong = queue[queueIndex];
+    QueuedSong memory qsong = queue[queueIndex];
 
     // Extract data from state
     songId = qsong.song.id;
@@ -77,7 +74,7 @@ contract Adoption {
     returns
   (uint id, uint durationSecs) {
     for (uint i = 0; i < songsAvailable.length; i++) {
-      Song storage song = songsAvailable[i];
+      Song memory song = songsAvailable[i];
       if (song.id == songId) {
         id = song.id;
         durationSecs = song.durationSecs;
@@ -93,7 +90,7 @@ contract Adoption {
    */
   function getCurrentSongQueueIndex() public view returns (uint songQueueIndex) {
     for (uint i = 0; i < queueSize; i++) {
-      QueuedSong storage qsong = queue[i];
+      QueuedSong memory qsong = queue[i];
       if (block.timestamp >= qsong.timestampSecs + qsong.song.durationSecs) {
         return i;
       }
