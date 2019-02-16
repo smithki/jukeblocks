@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": false,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "strict": true,
     "target": "es5",
     "sourceMap": true,

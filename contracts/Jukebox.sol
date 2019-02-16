@@ -36,9 +36,7 @@ contract Jukebox is Owned {
 
   // --- Events --- //
 
-  event SongSkip(uint skippedSongId);
-  event SongPrepend(uint songId);
-  event SongAppend(uint songId);
+  event Update();
 
   // --- Constructor -------------------------------------------------------- //
 
@@ -93,7 +91,7 @@ contract Jukebox is Owned {
   }
 
   /** Get the queue index of the currently playing song. */
-  function getCurrentSongQueueIndex(uint timestampSecs) public view returns (uint songQueueIndex) {
+  function getCurrentSongQueueIndex(uint timestampSecs) public view returns (uint) {
     uint prevDurationSecs = 0;
 
     // Find the currently playing song by comparing the given timestamp with
@@ -135,7 +133,7 @@ contract Jukebox is Owned {
     queue.push(QueuedSong(true, song, timestampSecs));
 
     // Emit append event
-    emit SongAppend(song.id);
+    emit Update();
   }
 
   /** Skip the currently playing song. */

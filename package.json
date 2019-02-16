@@ -7,18 +7,26 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "parcel src/index.html"
+    "dev": "npm-run-all -s dev:*",
+    "dev:migrate": "truffle migrate",
+    "dev:clean": "rimraf .cache dist",
+    "dev:compile": "parcel src/index.html"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@ikscodes/tslint-config": "^5.3.1",
     "lite-server": "^2.3.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.16.4",
+    "rimraf": "^2.6.3",
     "tslint": "^5.12.1",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3",
+    "truffle": "^5.0.4",
+    "truffle-typings": "^1.0.6"
   },
   "dependencies": {
+    "bignumber.js": "^8.0.2",
     "parcel-bundler": "^1.11.0",
     "web3": "^1.0.0-beta.46"
   }

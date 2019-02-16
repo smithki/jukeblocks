@@ -1,30 +1,25 @@
-import Web3 from 'web3';
-import { EventLog } from './EventLog';
-import { Jukeblocks } from './Jukeblocks';
-import { Web3Factory } from './Web3Factory';
+import { Jukebox } from './Jukebox';
+import { Queue } from './Queue';
 
 export class App {
-  public static contract: Jukeblocks;
-  public static eventLog: EventLog<Jukeblocks>;
+  public static contract: Jukebox;
+  public static queue: Queue;
 
   // --- App start logic --- //
 
   public static async start() {
-    await this.initialize();
+    await this.initializeContract();
+    await this.intializeQueue();
   }
 
   // --- Initializations --- //
 
-  private static async initialize() {
-    await this.initializeContract();
-    await this.initializeEventLog();
-  }
-
   private static async initializeContract() {
-    this.contract = new Jukeblocks();
+    this.contract = new Jukebox();
   }
 
-  private static async initializeEventLog() {
-    this.eventLog = new EventLog<Jukeblocks>(this.contract);
+  private static async intializeQueue() {
+    this.queue = new Queue(this.contract);
+    await this.queue.refresh();
   }
 }
