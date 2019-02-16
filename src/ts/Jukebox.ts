@@ -95,7 +95,7 @@ export class Jukebox {
   appendSongToQueue(
     songId: number,
     timestampSecs: number = Math.floor(new Date().getTime() / 1000),
-  ) {
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       this.contract.methods
         .appendSongToQueue(songId, timestampSecs)
@@ -105,7 +105,22 @@ export class Jukebox {
         })
         .then((receipt: any) => {
           console.log('[JUKEBOX -- appendSongToQueue]', receipt);
-          resolve(receipt);
+        })
+        .catch((err: any) => reject(err));
+    });
+  }
+
+  /** Append a song to the jukebox playlist. */
+  clearSongQueue(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.contract.methods
+        .clearSongQueue()
+        .send({
+          from: '0xB076Fd168ec1533ceA1AAdd87d2F5BfAcF801301',
+          gas: GAS_LIMIT,
+        })
+        .then((receipt: any) => {
+          console.log('[JUKEBOX -- clearSongQueue]', receipt);
         })
         .catch((err: any) => reject(err));
     });

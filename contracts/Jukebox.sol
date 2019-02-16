@@ -8,6 +8,7 @@ contract Jukebox is Owned {
   // --- Pricing --- //
 
   uint appendSongPrice = 20000000000000000; // wei
+  uint clearSongQueuePrice = 40000000000000000; // wei
 
   // --- Data structures --- //
 
@@ -48,7 +49,7 @@ contract Jukebox is Owned {
 
   // --- Business logic ----------------------------------------------------- //
 
-  // --- Getters --- //
+  // --- Read state --- //
 
   /** Get the current size of the song queue. */
   function getQueueSize() public view returns (uint) {
@@ -107,7 +108,7 @@ contract Jukebox is Owned {
     require(false, "No song is currently playing.");
   }
 
-  // --- State updates --- //
+  // --- Mutate state --- //
 
   /** Prepend a song to the jukebox playlist. */
   // function prependSongToQueue(uint songId, uint timestampSecs) public {}
@@ -136,10 +137,18 @@ contract Jukebox is Owned {
     emit Update();
   }
 
-  /** Skip the currently playing song. */
-  // function skipSong() public {}
+  /** Clear all songs from the queue. */
+  function clearSongQueue() public payable {
+    // require(msg.value >= clearSongQueuePrice, "Clearing all songs in the queue costs at least 0.04 ETH.");
 
-  /** Remove currently playing song from the queue. */
+    require (queue.length > 0, "Song queue is empty.");
+
+    delete queue;
+
+    emit Update();
+  }
+
+  /** Remove previously played songs from the queue. */
   function reconcileSongQueue(uint timestampSecs) private {
     uint prevDurationSecs = 0;
 
