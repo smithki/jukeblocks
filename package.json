@@ -20,14 +20,16 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
-    "tslint": "^5.12.1",
-    "typescript": "^3.3.3",
     "truffle": "^5.0.4",
-    "truffle-typings": "^1.0.6"
+    "truffle-typings": "^1.0.6",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
   },
   "dependencies": {
     "bignumber.js": "^8.0.2",
     "parcel-bundler": "^1.11.0",
+    "vue": "^2.6.6",
+    "vue-property-decorator": "^7.3.0",
     "web3": "^1.0.0-beta.46"
   }
 }

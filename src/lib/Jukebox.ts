@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import * as JukeboxArtifact from '../../build/contracts/Jukebox.json';
 import { CONTRACT_ADDRESS, GAS_LIMIT } from '../constants';
-import { QueuedSongData, SongData } from './types.js';
+import { QueuedSongData, SongData } from '../types';
 import { Web3Factory } from './Web3Factory';
 
 export class Jukebox {

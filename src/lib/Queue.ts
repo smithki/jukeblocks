@@ -1,5 +1,5 @@
+import { QueuedSongData } from '../types';
 import { Jukebox } from './Jukebox';
-import { QueuedSongData } from './types';
 
 export class Queue {
   private queue: QueuedSongData[] = [];
