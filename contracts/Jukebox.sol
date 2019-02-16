@@ -22,7 +22,6 @@ contract Jukebox is Owned {
   // --- State --- //
 
   // Song state
-  uint numSongs;
   Song[3] songsAvailable;
 
   // Songs currently queued
@@ -40,7 +39,6 @@ contract Jukebox is Owned {
     songsAvailable[0] = Song(0, 120);
     songsAvailable[1] = Song(1, 120);
     songsAvailable[2] = Song(2, 120);
-    numSongs = 3;
   }
 
   // --- Business logic ----------------------------------------------------- //
@@ -75,7 +73,7 @@ contract Jukebox is Owned {
     view
     returns
   (uint id, uint durationSecs) {
-    for (uint i = 0; i < numSongs; i++) {
+    for (uint i = 0; i < songsAvailable.length; i++) {
       Song memory song = songsAvailable[i];
       if (song.id == songId) {
         id = song.id;
@@ -133,7 +131,7 @@ contract Jukebox is Owned {
 
     // Get the song
     Song memory song;
-    for (uint i = 0; i < numSongs; i++) {
+    for (uint i = 0; i < songsAvailable.length; i++) {
       if (song.id == songId) {
         song = songsAvailable[i];
       }
