@@ -5,16 +5,23 @@ import "./Owned.sol";
 contract Jukebox is Owned {
   // --- Contract properties ------------------------------------------------ //
 
+  // --- Pricing --- //
+
+  uint appendSongPrice = 20000000000000000; // wei
+  uint clearSongQueuePrice = 40000000000000000; // wei
+
   // --- Data structures --- //
 
   // Song type
   struct Song {
+    bool initialized;
     uint id;
     uint durationSecs;
   }
 
   // Queued song type
   struct QueuedSong {
+    bool initialized;
     Song song; // The song type
     uint timestampSecs; // Unix timestamp when it was queued.
   }
@@ -25,25 +32,24 @@ contract Jukebox is Owned {
   Song[3] songsAvailable;
 
   // Songs currently queued
+  QueuedSong[] nextQueue;
   QueuedSong[] queue;
 
   // --- Events --- //
 
-  event SongSkip(uint skippedSongId);
-  event SongPrepend(uint songId);
-  event SongAppend(uint songId);
+  event Update();
 
   // --- Constructor -------------------------------------------------------- //
 
   constructor() public {
-    songsAvailable[0] = Song(0, 120);
-    songsAvailable[1] = Song(1, 120);
-    songsAvailable[2] = Song(2, 120);
+    songsAvailable[0] = Song(true, 0, 10);
+    songsAvailable[1] = Song(true, 1, 240);
+    songsAvailable[2] = Song(true, 2, 680);
   }
 
   // --- Business logic ----------------------------------------------------- //
 
-  // --- Getters --- //
+  // --- Read state --- //
 
   /** Get the current size of the song queue. */
   function getQueueSize() public view returns (uint) {
@@ -56,7 +62,7 @@ contract Jukebox is Owned {
     view
     returns
   (uint songId, uint durationSecs, uint timestampSecs) {
-    require(queueIndex < queue.length - 1, "Song queue is smaller than the provided queue index.");
+    require(queueIndex < queue.length, "Song queue is smaller than the provided queue index.");
     QueuedSong memory qsong = queue[queueIndex];
 
     // Extract data from state
@@ -86,7 +92,7 @@ contract Jukebox is Owned {
   }
 
   /** Get the queue index of the currently playing song. */
-  function getCurrentSongQueueIndex(uint timestampSecs) public view returns (uint songQueueIndex) {
+  function getCurrentSongQueueIndex(uint timestampSecs) public view returns (uint) {
     uint prevDurationSecs = 0;
 
     // Find the currently playing song by comparing the given timestamp with
@@ -102,29 +108,15 @@ contract Jukebox is Owned {
     require(false, "No song is currently playing.");
   }
 
-  // --- State updates --- //
+  // --- Mutate state --- //
 
   /** Prepend a song to the jukebox playlist. */
-  // function prependSongToQueue(uint songId, uint timestampSecs) public {
-  //   reconcileSongQueue(timestampSecs);
-
-  //   require(queueSize < 5, "Song queue is full. Wait for the current song to finish or pay to skip.");
-
-  //   if (queueSize > 0) {
-  //     for (uint i = queueSize - 1; i >= 0; i--) {
-  //       queue[i] = queue[i - 1];
-  //     }
-  //   }
-
-  //   Song memory song = songsAvailable[songId];
-  //   QueuedSong memory qsong = QueuedSong(song, timestampSecs);
-  //   queue[0] = qsong;
-
-  //   queueSize++;
-  // }
+  // function prependSongToQueue(uint songId, uint timestampSecs) public {}
 
   /** Append a song to the jukebox playlist. */
   function appendSongToQueue(uint songId, uint timestampSecs) public payable {
+    // require(msg.value >= appendSongPrice, "Adding a song to the queue costs at least 0.02 ETH.");
+
     reconcileSongQueue(timestampSecs);
 
     require(queue.length < 5, "Song queue is full. Wait for the current song to finish or pay to skip.");
@@ -132,35 +124,51 @@ contract Jukebox is Owned {
     // Get the song
     Song memory song;
     for (uint i = 0; i < songsAvailable.length; i++) {
-      if (song.id == songId) {
-        song = songsAvailable[i];
+      Song memory checkSong = songsAvailable[i];
+      if (checkSong.id == songId) {
+        song = checkSong;
       }
     }
 
     // Queue the song
-    queue.length++;
-    queue[queue.length] = QueuedSong(song, timestampSecs);
+    queue.push(QueuedSong(true, song, timestampSecs));
+
+    // Emit append event
+    emit Update();
   }
 
-  /** Skip the currently playing song. */
-  // function skipSong() public {}
+  /** Clear all songs from the queue. */
+  function clearSongQueue() public payable {
+    // require(msg.value >= clearSongQueuePrice, "Clearing all songs in the queue costs at least 0.04 ETH.");
 
-  /** Remove currently playing song from the queue. */
+    require (queue.length > 0, "Song queue is empty.");
+
+    delete queue;
+
+    emit Update();
+  }
+
+  /** Remove previously played songs from the queue. */
   function reconcileSongQueue(uint timestampSecs) private {
-    uint numSongsRemoved = 0;
     uint prevDurationSecs = 0;
 
     // Find queued songs that are expired (already played).
     for (uint i = 0; i < queue.length; i++) {
       QueuedSong memory qsong = queue[i];
-      if (timestampSecs >= qsong.timestampSecs + qsong.song.durationSecs + prevDurationSecs) {
-        numSongsRemoved++;
-        queue[i] = queue[i + numSongsRemoved];
-        delete queue[i + numSongsRemoved];
-        queue.length--;
+
+      if (timestampSecs < qsong.timestampSecs + qsong.song.durationSecs + prevDurationSecs) {
+        nextQueue.push(qsong);
       }
 
       prevDurationSecs += qsong.song.durationSecs;
     }
+
+    delete queue;
+
+    for (uint i = 0; i < nextQueue.length; i++) {
+      queue.push(nextQueue[i]);
+    }
+
+    delete nextQueue;
   }
 }
