@@ -14,6 +14,8 @@ import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import svg from '../assets/images/jukebox.svg';
 import { getSongDetails } from '../lib/song-details';
+import { jukebox } from '../store/jukebox';
+import { queue } from '../store/queue';
 import { QueuedSongData, SongDetails } from '../types';
 
 @Component({
@@ -21,10 +23,10 @@ import { QueuedSongData, SongDetails } from '../types';
 })
 export default class SongQueue extends Vue {
   // public qsongs: QueuedSongData[] | null = null;
-  // mounted() {
-  //   this.updateQueue();
-  //   // AppManager.contract.appendSongToQueue(0);
-  // }
+  mounted() {
+    queue.dispatch.updateQueue();
+    // jukebox.state.contract.appendSongToQueue(0);
+  }
   // updateQueue() {
   //   AppManager.queue.refresh();
   //   this.qsongs = AppManager.queue.getQueue();

@@ -37,7 +37,8 @@ contract Jukebox is Owned {
 
   // --- Events --- //
 
-  event Update();
+  event Append(uint songId, uint durationSecs, uint timestampSecs);
+  event Clear();
 
   // --- Constructor -------------------------------------------------------- //
 
@@ -118,7 +119,7 @@ contract Jukebox is Owned {
   function appendSongToQueue(uint songId, uint timestampSecs) public payable {
     // require(msg.value >= appendSongPrice, "Adding a song to the queue costs at least 0.02 ETH.");
 
-    reconcileSongQueue(timestampSecs);
+    uint prevDurationSecs = reconcileSongQueue(timestampSecs);
 
     require(queue.length < 5, "Song queue is full. Wait for the current song to finish or pay to skip.");
 
@@ -132,10 +133,10 @@ contract Jukebox is Owned {
     }
 
     // Queue the song
-    queue.push(QueuedSong(true, song, timestampSecs));
+    queue.push(QueuedSong(true, song, timestampSecs + prevDurationSecs));
 
     // Emit append event
-    emit Update();
+    emit Append(song.id, song.durationSecs, timestampSecs + prevDurationSecs);
   }
 
   /** Clear all songs from the queue. */
@@ -146,22 +147,23 @@ contract Jukebox is Owned {
 
     delete queue;
 
-    emit Update();
+    emit Clear();
   }
 
   /** Remove previously played songs from the queue. */
-  function reconcileSongQueue(uint timestampSecs) private {
+  function reconcileSongQueue(uint timestampSecs) private returns (uint) {
     uint prevDurationSecs = 0;
 
     // Find queued songs that are expired (already played).
     for (uint i = 0; i < queue.length; i++) {
       QueuedSong memory qsong = queue[i];
 
-      if (timestampSecs < qsong.timestampSecs + qsong.song.durationSecs + prevDurationSecs) {
+      if (timestampSecs < qsong.timestampSecs + qsong.song.durationSecs) {
         nextQueue.push(qsong);
+        uint total = qsong.timestampSecs + qsong.song.durationSecs;
+        uint diff = total - timestampSecs;
+        prevDurationSecs += qsong.song.durationSecs - diff;
       }
-
-      prevDurationSecs += qsong.song.durationSecs;
     }
 
     delete queue;
@@ -171,5 +173,7 @@ contract Jukebox is Owned {
     }
 
     delete nextQueue;
+
+    return prevDurationSecs;
   }
 }
