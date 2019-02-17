@@ -17,13 +17,13 @@ import { jukebox } from './jukebox';
 interface QueueState {
   songs: QueuedSongData[];
   track: HTMLAudioElement;
-  cumeTime: number;
+  start: boolean;
 }
 
 const initialQueueState: QueueState = {
   songs: [],
   track: undefined,
-  cumeTime: 0,
+  start: false,
 };
 
 // --- Mutations --- //
@@ -45,12 +45,8 @@ class QueueMutations extends ModuleMutations<QueueState> {
     this[state].track = track;
   }
 
-  setCumeTime(time: number) {
-    this[state].cumeTime = time;
-  }
-
-  addCumeTime(time: number) {
-    this[state].cumeTime += time;
+  setStart(start: boolean) {
+    this[state].start = start;
   }
 }
 
@@ -60,24 +56,23 @@ class QueueActions extends ModuleActions<QueueState> {
   async next(firstPlay?: boolean) {
     const now = Math.floor(new Date().getTime() / 1000);
 
-    if (firstPlay) {
-      const prev = queue.state.songs[0];
-      queue.commit.addCumeTime(prev.song.durationSecs);
-    }
     if (!firstPlay) queue.commit.setSongs(queue.state.songs.slice(1));
 
     const songDetails = getSongDetails(queue.getters.currentSong);
 
     const audio = new Audio(songDetails.mp3);
-    audio.play();
-    audio.currentTime =
-      Math.floor(new Date().getTime() / 1000) -
-      queue.getters.currentSong.timestampSecs;
-    audio.addEventListener('ended', () => {
+    queue.commit.setTrack(audio);
+    queue.state.track.play();
+    queue.state.track.currentTime =
+      now - queue.getters.currentSong.timestampSecs;
+    queue.state.track.addEventListener('ended', () => {
       queue.dispatch.next();
     });
 
-    queue.commit.setTrack(audio);
+    window.addEventListener('beforeunload', () => {
+      if (queue.state.track) queue.state.track.pause();
+      queue.commit.setTrack(undefined);
+    });
   }
 
   async updateQueue() {
@@ -96,12 +91,13 @@ class QueueActions extends ModuleActions<QueueState> {
       const current = await jukebox.state.contract.getCurrentSongQueueIndex();
       tempQueue.splice(0, current);
       queue.commit.setSongs(tempQueue);
-      this.next(true);
     } catch (err) {
       console.log(err);
       // if (err.message.includes('No song is currently playing.')) {
       // }
     }
+
+    console.log(queue.state.songs);
   }
 
   async initialize(web3: Web3) {

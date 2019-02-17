@@ -1,12 +1,16 @@
 <template>
-  <!-- <div
-    class="display-flex flexDirection-column textAlign-center">
-    <div v-for="qsong in qsongs" :key="qsong.timestampSecs">
-      <p>{{qsong.song.id}}</p>
-      <p>{{songDetails(qsong).artist}}</p>
+<div class="display-flex flexDirection-column padding-xl">
+  <div class="textAlign-center">
+    <span class="margin-lg fontSize-lg textAlign-center">Queue</span>
+    <button @click="clearQueue()">Clear</button>
+  </div>
+  <div class="display-flex flexGrow-1 flexDirection-column justifyContent-middle">
+    <div class="component__song-card" v-for="qsong in qsongs" :key="qsong.song.id">
+      <p>{{ songDetails(qsong).songName }}</p>
+      <p>{{ songDetails(qsong).artist }}</p>
     </div>
-  </div> -->
-  <div></div>
+  </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -22,17 +26,16 @@ import { QueuedSongData, SongDetails } from '../types';
   name: 'SongQueue',
 })
 export default class SongQueue extends Vue {
-  // public qsongs: QueuedSongData[] | null = null;
-  mounted() {
-    queue.dispatch.updateQueue();
-    // jukebox.state.contract.appendSongToQueue(0);
+  get qsongs() {
+    return queue.state.songs;
   }
-  // updateQueue() {
-  //   AppManager.queue.refresh();
-  //   this.qsongs = AppManager.queue.getQueue();
-  // }
-  // songDetails(songData: QueuedSongData): SongDetails {
-  //   if (songData) return getSongDetails(songData);
-  // }
+
+  songDetails(song: QueuedSongData) {
+    return getSongDetails(song);
+  }
+
+  clearQueue() {
+    jukebox.state.contract.clearSongQueue();
+  }
 }
 </script>

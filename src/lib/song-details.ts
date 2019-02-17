@@ -12,7 +12,7 @@ import mp3_1 from '../assets/mp3/acid-jazz-singer_the-fratellis.mp3';
 import mp3_2 from '../assets/mp3/all-the-small-things_blink-182.mp3';
 import mp3_3 from '../assets/mp3/doors-unlocked-and-open_death-cab-for-cutie.mp3';
 
-const songDetailsMappings: { [key: number]: SongDetails } = {
+export const songDetailsMappings: { [key: number]: SongDetails } = {
   0: {
     songName: '99 Red Balloons',
     artist: 'Goldfinger',

@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <!-- <background></background> -->
-    <current-song></current-song>
-    <song-queue></song-queue>
-    <button @click="add">Foo</button>
-    <button @click="clear">Bar</button>
+  <div class="backgroundColor-lightMg" :class="{ 'grid-main': start }">
+    <background v-if="!start" class="backgroundColor-lightFg"></background>
+    <current-song class="area-left backgroundColor-lightFg" v-show="start"></current-song>
+    <song-queue class="area-center backgroundColor-lightFg" v-show="start"></song-queue>
+    <available-songs class="area-right backgroundColor-lightFg" v-show="start"></available-songs>
   </div>
 </template>
 
@@ -14,6 +13,8 @@ import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 
 import { jukebox } from '../store/jukebox';
+import { queue } from '../store/queue';
+import AvailableSongs from './AvailableSongs.vue';
 import Background from './Background.vue';
 import CurrentSong from './CurrentSong.vue';
 import SongQueue from './SongQueue.vue';
@@ -24,6 +25,7 @@ import SongQueue from './SongQueue.vue';
     Background,
     SongQueue,
     CurrentSong,
+    AvailableSongs,
   },
 })
 export default class VueApp extends Vue {
@@ -33,6 +35,10 @@ export default class VueApp extends Vue {
 
   clear() {
     jukebox.state.contract.clearSongQueue();
+  }
+
+  get start() {
+    return queue.state.start;
   }
 }
 </script>

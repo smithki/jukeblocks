@@ -1,5 +1,6 @@
 @import '../../node_modules/anthology.scss/anthology.scss';
 @import './variables';
+@import './reset';
 
 @include A(configure, (
   'breakpoints': $breakpoints
@@ -9,3 +10,43 @@
 
 @include A(emit, (important: true));
 @include A(emit-responsive, (important: true));
+
+@import './layout';
+
+// -------------------------------------------------------------------------- //
+
+.component__current-song {
+  & .album-cover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: all 200ms ease-out;
+    will-change: transform, box-shadow;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.component__background {
+  & .jukebox-img {
+    cursor: pointer;
+    transition: all 200ms ease-out;
+    will-change: transform;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.component__song-card {
+  @include A(extend, (
+    ('margin', 'lg'),
+    ('backgroundColor', 'light'),
+    ('padding', 'lg'),
+    ('borderRadius', 'high'),
+  ));
+
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}

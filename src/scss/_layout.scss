@@ -1,0 +1,11 @@
+$main-grid-config: (
+  default: (
+    columns: 1fr 1fr 1fr,
+    gap: 1px,
+    rows: 1fr,
+    template:
+      'left center right'
+  ),
+);
+
+@include A(grid, main, $main-grid-config);

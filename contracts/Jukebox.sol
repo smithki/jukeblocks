@@ -95,16 +95,13 @@ contract Jukebox is Owned {
 
   /** Get the queue index of the currently playing song. */
   function getCurrentSongQueueIndex(uint timestampSecs) public view returns (uint) {
-    uint prevDurationSecs = 0;
-
     // Find the currently playing song by comparing the given timestamp with
     // queued song timestamps/durations.
     for (uint i = 0; i < queue.length; i++) {
       QueuedSong memory qsong = queue[i];
-      if (timestampSecs < qsong.timestampSecs + qsong.song.durationSecs + prevDurationSecs) {
+      if (timestampSecs < qsong.timestampSecs + qsong.song.durationSecs) {
         return i;
       }
-      prevDurationSecs += qsong.song.durationSecs;
     }
 
     require(false, "No song is currently playing.");
@@ -119,7 +116,7 @@ contract Jukebox is Owned {
   function appendSongToQueue(uint songId, uint timestampSecs) public payable {
     // require(msg.value >= appendSongPrice, "Adding a song to the queue costs at least 0.02 ETH.");
 
-    uint prevDurationSecs = reconcileSongQueue(timestampSecs);
+    reconcileSongQueue(timestampSecs);
 
     require(queue.length < 5, "Song queue is full. Wait for the current song to finish or pay to skip.");
 
@@ -132,11 +129,14 @@ contract Jukebox is Owned {
       }
     }
 
-    // Queue the song
-    queue.push(QueuedSong(true, song, timestampSecs + prevDurationSecs));
-
-    // Emit append event
-    emit Append(song.id, song.durationSecs, timestampSecs + prevDurationSecs);
+    if (queue.length > 0) {
+      QueuedSong memory prevSong = queue[queue.length - 1];
+      queue.push(QueuedSong(true, song, prevSong.timestampSecs + prevSong.song.durationSecs));
+      emit Append(song.id, song.durationSecs, prevSong.timestampSecs + prevSong.song.durationSecs);
+    } else {
+      queue.push(QueuedSong(true, song, timestampSecs));
+      emit Append(song.id, song.durationSecs, timestampSecs);
+    }
   }
 
   /** Clear all songs from the queue. */
@@ -151,18 +151,13 @@ contract Jukebox is Owned {
   }
 
   /** Remove previously played songs from the queue. */
-  function reconcileSongQueue(uint timestampSecs) private returns (uint) {
-    uint prevDurationSecs = 0;
-
+  function reconcileSongQueue(uint timestampSecs) private {
     // Find queued songs that are expired (already played).
     for (uint i = 0; i < queue.length; i++) {
       QueuedSong memory qsong = queue[i];
 
       if (timestampSecs < qsong.timestampSecs + qsong.song.durationSecs) {
         nextQueue.push(qsong);
-        uint total = qsong.timestampSecs + qsong.song.durationSecs;
-        uint diff = total - timestampSecs;
-        prevDurationSecs += qsong.song.durationSecs - diff;
       }
     }
 
@@ -173,7 +168,5 @@ contract Jukebox is Owned {
     }
 
     delete nextQueue;
-
-    return prevDurationSecs;
   }
 }
