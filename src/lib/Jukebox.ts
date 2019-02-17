@@ -10,7 +10,7 @@ export class Jukebox {
 
   async initialize(web3: Web3) {
     this.web3 = web3;
-    // this.address = (await this.web3.eth.getAccounts())[0];
+    this.address = (await this.web3.eth.getAccounts())[0];
     this.contract = new this.web3.eth.Contract(
       JukeboxArtifact.abi as any,
       CONTRACT_ADDRESS,

@@ -1,15 +1,16 @@
 import Vue from 'vue';
 
 import VueApp from './components/VueApp.vue';
+import { Web3Factory } from './lib/Web3Factory';
 import { store } from './store';
 import { jukebox } from './store/jukebox';
 import { queue } from './store/queue';
-import { web3 } from './store/web3';
 
 async function main() {
-  await web3.dispatch.initialize();
-  await jukebox.dispatch.initialize(web3.state.http);
-  await queue.dispatch.initialize(web3.state.ws);
+  await Web3Factory.createHttpInstance();
+  await Web3Factory.createWsInstance();
+  await jukebox.dispatch.initialize(Web3Factory.getHttpInstance());
+  await queue.dispatch.initialize(Web3Factory.getWsInstance());
 
   new Vue({
     store,
