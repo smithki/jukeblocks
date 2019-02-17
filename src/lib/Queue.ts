@@ -23,10 +23,13 @@ export class Queue {
 
     try {
       this.current = await this.contract.getCurrentSongQueueIndex();
+      this.queue.splice(0, this.current);
     } catch (err) {
-      if (err.message.includes('No song is currently playing.')) {
-        this.current = undefined;
-      }
+      console.log(err);
+      // if (err.message.includes('No song is currently playing.')) {
+      this.current = undefined;
+      this.queue = [];
+      // }
     }
   }
 

@@ -4,8 +4,19 @@ declare module "*.vue" {
 }
 
 declare module '*.svg' {
-  import { VNode } from 'vue';
   type Svg = string;
   const content: Svg;
+  export default content;
+}
+
+declare module '*.jpg' {
+  type Jpg = string;
+  const content: Jpg;
+  export default content;
+}
+
+declare module '*.mp3' {
+  type Mp3 = string;
+  const content: Mp3;
   export default content;
 }

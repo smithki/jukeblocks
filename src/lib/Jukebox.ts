@@ -2,16 +2,15 @@ import Web3 from 'web3';
 import * as JukeboxArtifact from '../../build/contracts/Jukebox.json';
 import { CONTRACT_ADDRESS, GAS_LIMIT } from '../constants';
 import { QueuedSongData, SongData } from '../types';
-import { Web3Factory } from './Web3Factory';
 
 export class Jukebox {
   private web3!: Web3;
   private address!: string;
   private contract: any;
 
-  async initialize() {
-    this.web3 = Web3Factory.getHttpInstance();
-    this.address = (await this.web3.eth.getAccounts())[0];
+  async initialize(web3: Web3) {
+    this.web3 = web3;
+    // this.address = (await this.web3.eth.getAccounts())[0];
     this.contract = new this.web3.eth.Contract(
       JukeboxArtifact.abi as any,
       CONTRACT_ADDRESS,

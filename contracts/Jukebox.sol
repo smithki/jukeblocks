@@ -29,7 +29,7 @@ contract Jukebox is Owned {
   // --- State --- //
 
   // Song state
-  Song[3] songsAvailable;
+  Song[4] songsAvailable;
 
   // Songs currently queued
   QueuedSong[] nextQueue;
@@ -42,9 +42,10 @@ contract Jukebox is Owned {
   // --- Constructor -------------------------------------------------------- //
 
   constructor() public {
-    songsAvailable[0] = Song(true, 0, 10);
-    songsAvailable[1] = Song(true, 1, 240);
-    songsAvailable[2] = Song(true, 2, 680);
+    songsAvailable[0] = Song(true, 0, 242);
+    songsAvailable[1] = Song(true, 1, 262);
+    songsAvailable[2] = Song(true, 2, 168);
+    songsAvailable[3] = Song(true, 3, 337);
   }
 
   // --- Business logic ----------------------------------------------------- //

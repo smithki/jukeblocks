@@ -8247,6 +8247,16 @@ vue@^2.6.6:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.6.tgz#dde41e483c11c46a7bf523909f4f2f816ab60d25"
   integrity sha512-Y2DdOZD8sxApS+iUlwv1v8U1qN41kq6Kw45lM6nVZKhygeWA49q7VCCXkjXqeDBXgurrKWkYQ9cJeEJwAq0b9Q==
 
+vuex-ts@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/vuex-ts/-/vuex-ts-5.0.1.tgz#dc5e284b763c7c0a74e06cd6ae504e4964445d25"
+  integrity sha512-Brx75r7nFem24r6SJ3BRr6kDIPx3A3rKUI84YbiwaR9PqOtUkYXiMjhL8IFei2HtDkFJhSKVD1XgzQnwixtVmA==
+
+vuex@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.1.0.tgz#634b81515cf0cfe976bd1ffe9601755e51f843b9"
+  integrity sha512-mdHeHT/7u4BncpUZMlxNaIdcN/HIt1GsGG5LKByArvYG/v6DvHcOxvDCts+7SRdCoIRGllK8IMZvQtQXLppDYg==
+
 wcwidth@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/wcwidth/-/wcwidth-1.0.1.tgz#f0b0dcf915bc5ff1528afadb2c0e17b532da2fe8"

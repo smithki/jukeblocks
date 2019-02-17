@@ -9,5 +9,8 @@ export interface QueuedSongData {
 }
 
 export interface SongDetails {
+  songName: string;
   artist: string;
+  cover: string;
+  mp3: string;
 }
