@@ -19,7 +19,7 @@ export class AppManager {
 
   private static async initializeVue() {
     new Vue({
-      el: '#app-root',
+      el: document.getElementById('app-root') as any,
       render(h) {
         return h(VueApp);
       },

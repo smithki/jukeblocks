@@ -1,0 +1,22 @@
+$spacing-adjectives: (
+  '0': 0,
+  'sm': 4px,
+  'md': 8px,
+  'lg': 12px,
+  'xl': 20px,
+  'xxl': 30px,
+);
+
+// Paddings
+@include A(define, 'padding', padding, $spacing-adjectives);
+@include A(define, 'paddingTop', padding-top, $spacing-adjectives);
+@include A(define, 'paddingRight', padding-right, $spacing-adjectives);
+@include A(define, 'paddingBottom', padding-bottom, $spacing-adjectives);
+@include A(define, 'paddingLeft', padding-left, $spacing-adjectives);
+
+// Margins
+@include A(define, 'margin', margin, $spacing-adjectives);
+@include A(define, 'marginTop', margin-top, $spacing-adjectives);
+@include A(define, 'marginRight', margin-right, $spacing-adjectives);
+@include A(define, 'marginBottom', margin-bottom, $spacing-adjectives);
+@include A(define, 'marginLeft', margin-left, $spacing-adjectives);
