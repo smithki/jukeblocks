@@ -12,6 +12,8 @@ export class Queue {
   }
 
   public async refresh() {
+    this.queue = [];
+
     const size = await this.contract.getQueueSize();
 
     for (let i = 0; i < size; i++) {

@@ -21,6 +21,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
+    "sass": "^1.17.0",
     "truffle": "^5.0.4",
     "truffle-typings": "^1.0.6",
     "tslint": "^5.12.1",
@@ -28,7 +29,9 @@
     "vue-template-compiler": "^2.6.6"
   },
   "dependencies": {
+    "anthology.scss": "^0.7.4",
     "bignumber.js": "^8.0.2",
+    "node-sass": "^4.11.0",
     "parcel-bundler": "^1.11.0",
     "vue": "^2.6.6",
     "vue-hot-reload-api": "^2.3.2",

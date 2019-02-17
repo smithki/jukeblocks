@@ -5,11 +5,13 @@ import { QueuedSongData, SongData } from '../types';
 import { Web3Factory } from './Web3Factory';
 
 export class Jukebox {
-  private web3: Web3;
+  private web3!: Web3;
+  private address!: string;
   private contract: any;
 
-  constructor() {
+  async initialize() {
     this.web3 = Web3Factory.getHttpInstance();
+    this.address = (await this.web3.eth.getAccounts())[0];
     this.contract = new this.web3.eth.Contract(
       JukeboxArtifact.abi as any,
       CONTRACT_ADDRESS,
@@ -100,7 +102,7 @@ export class Jukebox {
       this.contract.methods
         .appendSongToQueue(songId, timestampSecs)
         .send({
-          from: '0xB076Fd168ec1533ceA1AAdd87d2F5BfAcF801301',
+          from: this.address,
           gas: GAS_LIMIT,
         })
         .then((receipt: any) => {
@@ -116,7 +118,7 @@ export class Jukebox {
       this.contract.methods
         .clearSongQueue()
         .send({
-          from: '0xB076Fd168ec1533ceA1AAdd87d2F5BfAcF801301',
+          from: this.address,
           gas: GAS_LIMIT,
         })
         .then((receipt: any) => {

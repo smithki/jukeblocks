@@ -15,7 +15,6 @@ export class Web3Factory {
    * provider.
    */
   public static getWsInstance(): Web3 {
-    if (!this.wsInstance) this.createWsInstance();
     return this.wsInstance;
   }
 
@@ -23,7 +22,6 @@ export class Web3Factory {
    * Get the Web3 instance, which has been instantiated with the HTTP provider.
    */
   public static getHttpInstance(): Web3 {
-    if (!this.httpInstance) this.createHttpInstance();
     return this.httpInstance;
   }
 
@@ -32,7 +30,7 @@ export class Web3Factory {
   /**
    * Create a new Web3 instance with the WebSocket provider.
    */
-  private static createWsInstance(): Web3 {
+  public static async createWsInstance(): Promise<Web3> {
     this.wsInstance = new Web3(RPC_SOCKET_URL);
     return this.wsInstance;
   }
@@ -40,8 +38,29 @@ export class Web3Factory {
   /**
    * Create a new Web3 instance with the HTTP provider.
    */
-  private static createHttpInstance(): Web3 {
-    this.httpInstance = new Web3(RPC_HTTP_URL);
+  public static async createHttpInstance(): Promise<Web3> {
+    let injectedProvider;
+
+    if ((window as any).ethereum) {
+      injectedProvider = (window as any).ethereum;
+      try {
+        // Request account access if needed
+        await injectedProvider.enable();
+        injectedProvider = (window as any).web3.currentProvider;
+      } catch (error) {
+        injectedProvider = undefined;
+      }
+    } else if ((window as any).web3) {
+      injectedProvider = (window as any).web3.currentProvider;
+    }
+
+    // Wallet not found or user denied access...
+    if (!injectedProvider) {
+      this.httpInstance = new Web3(RPC_HTTP_URL);
+      return this.httpInstance;
+    }
+
+    this.httpInstance = new Web3(injectedProvider);
     return this.httpInstance;
   }
 }

@@ -7,3 +7,7 @@ export interface QueuedSongData {
   song: SongData;
   timestampSecs: number;
 }
+
+export interface SongDetails {
+  artist: string;
+}
